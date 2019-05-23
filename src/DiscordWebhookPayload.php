@@ -15,7 +15,7 @@ class DiscordWebhookPayload
 
     public function __construct($content, $username=null, $avatarUrl=null, $textToSpeech=false)
     {
-        $this->content = $content;
+        $this->content = $content; //TODO: Content isnt required, lets rip this apart and make chained setters
         $this->username = $username;
         $this->avatarUrl = $avatarUrl;
 
@@ -27,6 +27,7 @@ class DiscordWebhookPayload
         $this->embeds[] = ["title" => $title, "description" => $description];
     }
 
+    //TODO: Make this use jsonSerialize rather than making it fancy. It will be much easier to use!
     public function getPayload() {
 
         $payload = [
