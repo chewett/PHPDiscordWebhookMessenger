@@ -10,7 +10,7 @@ class DiscordWebhookPayload
 
     private $textToSpeech;
 
-    private $embeds = [];
+    private $embeds = []; //TODO: Embed is actually a complex datastructure, so lets make it so.
 
 
     public function __construct($content, $username=null, $avatarUrl=null, $textToSpeech=false)
