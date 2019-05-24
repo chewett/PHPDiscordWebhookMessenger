@@ -9,17 +9,19 @@ class DiscordEmbedField implements \JsonSerializable {
     private $name;
     /** @var string value of the field */
     private $value;
-    /** @var bool whether or not this field should display inline */
+    /** @var bool|null whether or not this field should display inline */
     private $inline;
 
     /**
      *
      * @param $name
      * @param $value
+     * @param $inline
      */
-    public function __construct($name, $value) {
+    public function __construct($name, $value, $inline=null) {
         $this->name = $name;
         $this->value = $value;
+        $this->inline = $inline;
     }
 
     /** @override */
@@ -29,7 +31,7 @@ class DiscordEmbedField implements \JsonSerializable {
             'value' => $this->value
         ];
 
-        if($this->inline) {
+        if($this->inline !== null) {
             $returnedData['inline'] = $this->inline;
         }
 
