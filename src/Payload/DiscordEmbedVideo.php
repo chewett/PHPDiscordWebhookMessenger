@@ -4,7 +4,7 @@ namespace Chewett\PHPDiscordWebhookMessenger\Payload;
 
 
 
-class DiscordEmbedVideo {
+class DiscordEmbedVideo implements \JsonSerializable  {
 
     /** @var string source url of video */
     private $url;
@@ -13,6 +13,7 @@ class DiscordEmbedVideo {
     /** @var int width of video */
     private $width;
 
+    /** @override */
     public function jsonSerialize() {
         $returnedData = [];
 

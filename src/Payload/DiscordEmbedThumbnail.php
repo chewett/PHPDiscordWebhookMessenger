@@ -4,7 +4,7 @@ namespace Chewett\PHPDiscordWebhookMessenger\Payload;
 
 
 
-class DiscordEmbedThumbnail {
+class DiscordEmbedThumbnail implements \JsonSerializable {
 
     /** @var string source url of the thumbnail */
     private $url;
@@ -15,7 +15,7 @@ class DiscordEmbedThumbnail {
     /** @var int width of thumbnail */
     private $width;
 
-
+    /** @override */
     public function jsonSerialize() {
         $returnedData = [];
 
