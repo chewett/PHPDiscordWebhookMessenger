@@ -6,6 +6,7 @@ namespace Chewett\PHPDiscordWebhookMessenger\Test;
 
 use Chewett\PHPDiscordWebhookMessenger\DiscordWebhookPayload;
 use Chewett\PHPDiscordWebhookMessenger\DiscordWebhookPoster;
+use Chewett\PHPDiscordWebhookMessenger\Exceptions\DiscordInvalidMessageSentException;
 use PHPUnit\Framework\TestCase;
 
 
@@ -64,12 +65,32 @@ class TestDiscordWebhookPoster extends TestCase
         return $payload;
     }
 
-    /** @dataProvider payloadArgsProvider */
-    public function testConstructor($content, $username=null, $avatarUrl=null, $textToSpeech=false, $embeds=[]) {
-        $payload = $this->createObject($content, $username, $avatarUrl, $textToSpeech, $embeds);
+    public function testInvalidEmptyMessage() {
+        $this->expectException(DiscordInvalidMessageSentException::class);
+
+        $payload = new DiscordWebhookPayload();
+        $result = DiscordWebhookPoster::postMessage(self::$testConfig['testing_webhook_url'], $payload);
+        $this->assertNotNull($result);
+    }
+
+    public function testInvalidEmptyMessageWithUsername() {
+        $this->expectException(DiscordInvalidMessageSentException::class);
+
+        $payload = new DiscordWebhookPayload();
+        $payload->setUsername("Hello World Username");
+        $result = DiscordWebhookPoster::postMessage(self::$testConfig['testing_webhook_url'], $payload);
+        $this->assertNotNull($result);
+    }
+
+
+    public function testOnlyContent() {
+        $payload = new DiscordWebhookPayload();
+        $payload->setContent("testOnlyContent: Hello World ");
 
         $result = DiscordWebhookPoster::postMessage(self::$testConfig['testing_webhook_url'], $payload);
         $this->assertNotNull($result);
-
     }
+
+
+
 }

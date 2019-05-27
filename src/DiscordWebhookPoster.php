@@ -3,6 +3,8 @@
 namespace Chewett\PHPDiscordWebhookMessenger;
 
 use Chewett\PHPDiscordWebhookMessenger\Exceptions\DiscordCurlException;
+use Chewett\PHPDiscordWebhookMessenger\Exceptions\DiscordInvalidMessageSentException;
+
 
 /**
  * Class DiscordWebhookPoster
@@ -25,9 +27,10 @@ class DiscordWebhookPoster
      * @param DiscordWebhookPayload $payloadObject Object representing the
      * @return string Web response from Discord when successful, otherwise an exception is thrown.
      * @throws DiscordCurlException Thrown when curl has an issue and fails to make the request.
+     * @throws DiscordInvalidMessageSentException TODO: fill in
      */
     public static function postMessage($webhookUrl, DiscordWebhookPayload $payloadObject) {
-        $jsonToUpload = $payloadObject->getPayload();
+        $jsonToUpload = json_encode($payloadObject);
 
         $ch = \curl_init($webhookUrl);
         \curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
@@ -39,6 +42,14 @@ class DiscordWebhookPoster
         ]);
 
         $result = \curl_exec($ch);
+        $jsonDecodedResult = json_decode($result, true);
+
+        $returnCode = \curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
+
+        if($returnCode === 400) {
+            throw new DiscordInvalidMessageSentException($ch, $jsonDecodedResult['code'], $jsonDecodedResult['message']);
+        }
+
         if($result) {
             return $result;
         }

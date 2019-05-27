@@ -2,33 +2,64 @@
 
 namespace Chewett\PHPDiscordWebhookMessenger;
 
-class DiscordWebhookPayload
+use Chewett\PHPDiscordWebhookMessenger\Payload\DiscordEmbedPayload;
+
+
+class DiscordWebhookPayload implements \JsonSerializable
 {
 
     private $content = "";
     private $username = null;
-
+    private $avatarUrl;
     private $textToSpeech;
+    private $embeds = [];
 
-    private $embeds = []; //TODO: Embed is actually a complex datastructure, so lets make it so.
+    /**
+     * @param string $content
+     * @return DiscordWebhookPayload
+     */
+    public function setContent($content) {
+        $this->content = $content;
+        return $this;
+    }
 
-
-    public function __construct($content, $username=null, $avatarUrl=null, $textToSpeech=false)
-    {
-        $this->content = $content; //TODO: Content isnt required, lets rip this apart and make chained setters
+    /**
+     * @param null $username
+     * @return DiscordWebhookPayload
+     */
+    public function setUsername($username) {
         $this->username = $username;
+        return $this;
+    }
+
+    /**
+     * @param mixed $avatarUrl
+     * @return DiscordWebhookPayload
+     */
+    public function setAvatarUrl($avatarUrl) {
         $this->avatarUrl = $avatarUrl;
+        return $this;
+    }
 
+    /**
+     * @param mixed $textToSpeech
+     * @return DiscordWebhookPayload
+     */
+    public function setTextToSpeech($textToSpeech) {
         $this->textToSpeech = $textToSpeech;
-
+        return $this;
     }
 
-    public function addEmbed($title, $description) {
-        $this->embeds[] = ["title" => $title, "description" => $description];
+    /**
+     * @param DiscordEmbedPayload $embedPayload
+     * @return DiscordWebhookPayload
+     */
+    public function addEmbed(DiscordEmbedPayload $embedPayload) {
+        $this->embeds[] = $embedPayload;
+        return $this;
     }
 
-    //TODO: Make this use jsonSerialize rather than making it fancy. It will be much easier to use!
-    public function getPayload() {
+    public function jsonSerialize() {
 
         $payload = [
             "content" => $this->content,
@@ -43,8 +74,11 @@ class DiscordWebhookPayload
         if($this->avatarUrl) {
             $payload['avatar_url'] = $this->avatarUrl;
         }
+        if($this->embeds) {
+            $payload['embeds'] = $this->embeds;
+        }
 
-        return json_encode($payload);
+        return $payload;
     }
 
 
